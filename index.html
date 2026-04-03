@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeffery Tseng's Journeys</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Serif+TC:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: #f5f0e8;
+    font-family: 'Lato', 'Noto Serif TC', serif;
+    color: #3a3228;
+    min-height: 100vh;
+  }
+
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 100;
+    opacity: 0.3;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  header {
+    text-align: center;
+    padding: 5rem 2rem 3rem;
+  }
+  .subtitle-top {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    font-size: 11px;
+    color: #a08c78;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.6rem, 6vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    color: #2c2318;
+    animation: fadeUp 0.9s ease 0.1s both;
+  }
+  h1 em { font-style: italic; color: #7a5c44; }
+  .divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1rem; margin: 2rem auto;
+    animation: fadeUp 1s ease 0.2s both;
+  }
+  .divider-line { width: 60px; height: 0.5px; background: #c4a882; }
+  .divider-dot { width: 5px; height: 5px; border-radius: 50%; background: #c4a882; }
+  .header-desc {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 300;
+    font-size: 15px;
+    color: #8a7060;
+    letter-spacing: 0.05em;
+    animation: fadeUp 1s ease 0.3s both;
+  }
+
+  .trips-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 2rem 6rem;
+  }
+  .trip-section {
+    margin-bottom: 4rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  .trip-section:nth-child(1) { animation-delay: 0.2s; }
+  .trip-section:nth-child(2) { animation-delay: 0.35s; }
+  .trip-section:nth-child(3) { animation-delay: 0.5s; }
+  .trip-section:nth-child(4) { animation-delay: 0.65s; }
+  .trip-section:nth-child(5) { animation-delay: 0.8s; }
+  .trip-section:nth-child(6) { animation-delay: 0.95s; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.5px solid #ddd0be;
+    flex-wrap: wrap;
+  }
+  .section-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    color: #b8a490;
+    letter-spacing: 0.2em;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: #2c2318;
+  }
+  .section-with {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #a08c78;
+    letter-spacing: 0.1em;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .with-heart { color: #c4808a; margin-right: 4px; }
+
+  .cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .trip-card {
+    background: #fdf8f2;
+    border: 0.5px solid #ddd0be;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.35s ease;
+  }
+  .trip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 35px rgba(100, 70, 40, 0.13);
+  }
+
+  .card-thumb {
+    height: 150px;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: #e8ddd0;
+  }
+  .card-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+  }
+  .trip-card:hover .card-thumb img { transform: scale(1.05); }
+
+  .thumb-overlay {
+    position: absolute; inset: 0;
+    background: rgba(44, 35, 24, 0.25);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.3s ease;
+  }
+  .trip-card:hover .thumb-overlay { background: rgba(44, 35, 24, 0.15); }
+
+  .play-btn {
+    width: 44px; height: 44px;
+    background: rgba(253, 248, 242, 0.92);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.3s ease;
+  }
+  .trip-card:hover .play-btn { transform: scale(1.15); }
+  .play-btn svg { margin-left: 3px; }
+
+  .ep-badge {
+    position: absolute; top: 10px; left: 12px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: rgba(253,248,242,0.9);
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+  }
+
+  .card-body {
+    padding: 1rem 1.1rem 1.1rem;
+    border-top: 0.5px solid #ddd0be;
+  }
+  .card-ep-label {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: #b8a490;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+    font-family: 'Lato', sans-serif;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: #2c2318;
+    line-height: 1.45;
+  }
+  .card-title.loading {
+    color: #c4a882;
+    font-style: italic;
+    font-size: 0.85rem;
+  }
+
+  .trip-card.single { max-width: 360px; }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: #b8a490;
+    border-top: 0.5px solid #ddd0be;
+    font-family: 'Lato', sans-serif;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header>
+  <div class="subtitle-top">Travel Diary</div>
+  <h1>Jeffery Tseng's<br><em>Journeys</em></h1>
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-dot"></div>
+    <div class="divider-line"></div>
+  </div>
+  <div class="header-desc">每一段旅程，都是一首寫給自己的詩</div>
+</header>
+
+<div class="trips-container">
+
+  <!-- 台南 -->
+  <div class="trip-section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">台南</span>
+      <span class="section-with"><span class="with-heart">♡</span>with Laura</span>
+    </div>
+    <div class="cards-row">
+      <a class="trip-card single" href="https://www.youtube.com/watch?v=JaUR19OIUnk&t=304s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/JaUR19OIUnk/mqdefault.jpg" alt="台南" loading="lazy">
+          <div class="thumb-overlay">
+            <div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Tainan · Taiwan</div>
+          <div class="card-title loading" data-vid="JaUR19OIUnk">載入中…</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 東京 -->
+  <div class="trip-section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">東京</span>
+      <span class="section-with"><span class="with-heart">♡</span>with Laura</span>
+    </div>
+    <div class="cards-row">
+      <a class="trip-card single" href="https://www.youtube.com/watch?v=QEC_QG8sBqs&t=262s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/QEC_QG8sBqs/mqdefault.jpg" alt="東京" loading="lazy">
+          <div class="thumb-overlay">
+            <div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Tokyo · Japan</div>
+          <div class="card-title loading" data-vid="QEC_QG8sBqs">載入中…</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 京都大阪 -->
+  <div class="trip-section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">京都 · 大阪</span>
+      <span class="section-with"><span class="with-heart">♡</span>with Laura</span>
+    </div>
+    <div class="cards-row">
+      <a class="trip-card" href="https://www.youtube.com/watch?v=zILHEy0dw5w&t=496s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/zILHEy0dw5w/mqdefault.jpg" alt="京都大阪 ep1" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+          <span class="ep-badge">EP. 01</span>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Kyoto · Osaka · Japan</div>
+          <div class="card-title loading" data-vid="zILHEy0dw5w">載入中…</div>
+        </div>
+      </a>
+      <a class="trip-card" href="https://www.youtube.com/watch?v=hdQTvApmT0o&t=6s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/hdQTvApmT0o/mqdefault.jpg" alt="京都大阪 ep2" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+          <span class="ep-badge">EP. 02</span>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Kyoto · Osaka · Japan</div>
+          <div class="card-title loading" data-vid="hdQTvApmT0o">載入中…</div>
+        </div>
+      </a>
+      <a class="trip-card" href="https://www.youtube.com/watch?v=-smIgaFJrJU&t=639s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/-smIgaFJrJU/mqdefault.jpg" alt="京都大阪 ep3" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+          <span class="ep-badge">EP. 03</span>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Kyoto · Osaka · Japan</div>
+          <div class="card-title loading" data-vid="-smIgaFJrJU">載入中…</div>
+        </div>
+      </a>
+      <a class="trip-card" href="https://www.youtube.com/watch?v=iX78vYJ-SIk" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/iX78vYJ-SIk/mqdefault.jpg" alt="京都大阪 ep4" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+          <span class="ep-badge">EP. 04</span>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Kyoto · Osaka · Japan</div>
+          <div class="card-title loading" data-vid="iX78vYJ-SIk">載入中…</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 香港 -->
+  <div class="trip-section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">香港</span>
+      <span class="section-with"><span class="with-heart">♡</span>with Laura</span>
+    </div>
+    <div class="cards-row">
+      <a class="trip-card" href="https://www.youtube.com/watch?v=rxd_9ElC3Nw&t=4s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/rxd_9ElC3Nw/mqdefault.jpg" alt="香港 ep1" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+          <span class="ep-badge">EP. 01</span>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Hong Kong</div>
+          <div class="card-title loading" data-vid="rxd_9ElC3Nw">載入中…</div>
+        </div>
+      </a>
+      <a class="trip-card" href="https://www.youtube.com/watch?v=6CITtDnOv9c&t=497s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/6CITtDnOv9c/mqdefault.jpg" alt="香港 ep2" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+          <span class="ep-badge">EP. 02</span>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Hong Kong</div>
+          <div class="card-title loading" data-vid="6CITtDnOv9c">載入中…</div>
+        </div>
+      </a>
+      <a class="trip-card" href="https://www.youtube.com/watch?v=MSapzQbVC2E&t=14s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/MSapzQbVC2E/mqdefault.jpg" alt="香港 ep3" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+          <span class="ep-badge">EP. 03</span>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Hong Kong</div>
+          <div class="card-title loading" data-vid="MSapzQbVC2E">載入中…</div>
+        </div>
+      </a>
+      <a class="trip-card" href="https://www.youtube.com/watch?v=cV3icYnUZT4&t=438s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/cV3icYnUZT4/mqdefault.jpg" alt="香港 ep4" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+          <span class="ep-badge">EP. 04</span>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Hong Kong</div>
+          <div class="card-title loading" data-vid="cV3icYnUZT4">載入中…</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 嘉義 -->
+  <div class="trip-section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">嘉義</span>
+      <span class="section-with"><span class="with-heart">♡</span>with Laura</span>
+    </div>
+    <div class="cards-row">
+      <a class="trip-card single" href="https://www.youtube.com/watch?v=X4_o7kGJX-M&t=124s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/X4_o7kGJX-M/mqdefault.jpg" alt="嘉義" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Chiayi · Taiwan</div>
+          <div class="card-title loading" data-vid="X4_o7kGJX-M">載入中…</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 志佳陽大山 -->
+  <div class="trip-section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <span class="section-title">志佳陽大山</span>
+      <span class="section-with">with friends</span>
+    </div>
+    <div class="cards-row">
+      <a class="trip-card single" href="https://www.youtube.com/watch?v=L_Q8d8LQEng&t=1184s" target="_blank">
+        <div class="card-thumb">
+          <img src="https://img.youtube.com/vi/L_Q8d8LQEng/mqdefault.jpg" alt="志佳陽大山" loading="lazy">
+          <div class="thumb-overlay"><div class="play-btn"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#3a3228"/></svg></div></div>
+        </div>
+        <div class="card-body">
+          <div class="card-ep-label">Mt. Zhijiayan · Taiwan</div>
+          <div class="card-title loading" data-vid="L_Q8d8LQEng">載入中…</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<footer>© Jeffery Tseng &nbsp;·&nbsp; All Journeys Reserved</footer>
+
+<script>
+  async function fetchTitle(videoId, el) {
+    try {
+      const url = 'https://noembed.com/embed?url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + videoId);
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data && data.title) {
+        el.textContent = data.title;
+        el.classList.remove('loading');
+      } else {
+        el.textContent = '（無法取得標題）';
+        el.classList.remove('loading');
+      }
+    } catch (e) {
+      el.textContent = '（無法取得標題）';
+      el.classList.remove('loading');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var titleEls = document.querySelectorAll('.card-title[data-vid]');
+    titleEls.forEach(function(el) {
+      fetchTitle(el.getAttribute('data-vid'), el);
+    });
+  });
+</script>
+
+</body>
+</html>
